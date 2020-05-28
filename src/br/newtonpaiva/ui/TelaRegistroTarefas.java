@@ -4,7 +4,12 @@
  * and open the template in the editor.
  */
 package br.newtonpaiva.ui;
+import br.newtonpaiva.dominio.Situacao;
 import br.newtonpaiva.dominio.Tarefa;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -47,6 +52,13 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
         cbxPrioridade = new javax.swing.JComboBox<>();
         lblPercentual = new javax.swing.JLabel();
         txtPercentual = new javax.swing.JSpinner();
+        lblDescricao = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtdescricao = new javax.swing.JTextArea();
+        lblDataLimite = new javax.swing.JLabel();
+        txtDataLimite = new javax.swing.JFormattedTextField();
+        cbxSituacao = new javax.swing.JComboBox<>();
+        lblSituacao = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -76,6 +88,26 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
 
         txtPercentual.setModel(new javax.swing.SpinnerNumberModel(0, 0, 100, 1));
 
+        lblDescricao.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        lblDescricao.setText("Descrição:");
+
+        txtdescricao.setColumns(20);
+        txtdescricao.setRows(5);
+        jScrollPane1.setViewportView(txtdescricao);
+
+        lblDataLimite.setText("Data Limite:");
+
+        txtDataLimite.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+
+        cbxSituacao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A Fazer", "Em execução", "Feito" }));
+        cbxSituacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxSituacaoActionPerformed(evt);
+            }
+        });
+
+        lblSituacao.setText("Situação:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -84,26 +116,46 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblPercentual)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
+                        .addComponent(lblDescricao)
+                        .addContainerGap(680, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(32, 32, 32)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(lblPercentual)
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(txtPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(lblDataLimite)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(txtDataLimite))
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addGap(68, 68, 68)
+                                                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(0, 0, Short.MAX_VALUE))))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblPrioridade)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cbxPrioridade, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblSituacao)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(lblPrioridade)
-                            .addGap(18, 18, 18)
-                            .addComponent(cbxPrioridade, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(63, Short.MAX_VALUE))
+                                .addComponent(cbxSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(17, 17, 17))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,10 +171,18 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
                     .addComponent(lblPrioridade)
                     .addComponent(cbxPrioridade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblPercentual)
-                    .addComponent(txtPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(58, 58, 58)
+                    .addComponent(txtPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDataLimite)
+                    .addComponent(txtDataLimite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSituacao))
+                .addGap(18, 18, 18)
+                .addComponent(lblDescricao)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addGap(27, 27, 27))
         );
 
         pack();
@@ -142,16 +202,53 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
         Integer prioridade = Integer.parseInt(prioridadeStr);     
         */
         
-        
+        //Linhas para recuperar informações da tela
         String  prioridade = cbxPrioridade.getSelectedItem().toString();
         
         Integer percentual = (Integer) txtPercentual.getValue();
+        
+        String descricao = txtdescricao.getText();
+        
+        String dataLimiteStr = txtDataLimite.getText();
+        Calendar dataLimite = Calendar.getInstance();
+        
+        
+        
+        try{
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Date d = format.parse(dataLimiteStr);
+        dataLimite.setTime(d); //Trabalhando com datas
+        } catch(ParseException e){
+            JOptionPane.showConfirmDialog(this,"Data limite é invalida.");
+            return;     
+        }
+        
+        int index = cbxSituacao.getSelectedIndex();
+        Situacao situacao = Situacao.values()[index];
+        
+        
+//        if(situacao == Situacao.A_FAZER){
+//                    }else if(Situacao == Situacao.EM_EXECUCAO){
+//                    }else{
+//                    }
+        
         
         Tarefa t = new Tarefa();
         t.setNome(nome);
         t.setPrioridade(prioridade);
         t.setPercentual(percentual);
+        t.setDescricao(descricao);
         
+        
+        
+        try{
+        t.setDataLimite(dataLimite);
+        } catch(IllegalStateException e){
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            return;
+        }
+        
+        t.setSituacao(situacao);
         
         em.getTransaction().begin();
         em.persist(t);
@@ -161,6 +258,10 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, "Tarefa registrada com sucesso!" );
                 
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void cbxSituacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxSituacaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxSituacaoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -207,12 +308,19 @@ public class TelaRegistroTarefas extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox<String> cbxPrioridade;
+    private javax.swing.JComboBox<String> cbxSituacao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblDataLimite;
+    private javax.swing.JLabel lblDescricao;
     private javax.swing.JLabel lblPercentual;
     private javax.swing.JLabel lblPrioridade;
+    private javax.swing.JLabel lblSituacao;
+    private javax.swing.JFormattedTextField txtDataLimite;
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtNome;
     private javax.swing.JSpinner txtPercentual;
+    private javax.swing.JTextArea txtdescricao;
     // End of variables declaration//GEN-END:variables
 }

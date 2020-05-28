@@ -1,13 +1,17 @@
 
 package br.newtonpaiva.dominio;
 
+import java.util.Calendar;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -17,6 +21,8 @@ import javax.persistence.Table;
 @Table(name = "tb_tarefa")
 
 public class Tarefa {
+
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "tarefa_id")
@@ -34,6 +40,14 @@ public class Tarefa {
     @Column(name = "des_tarefa")
     private String descricao;
     
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dta_limite", nullable = false)
+    private Calendar dataLimite;
+    
+    @Enumerated
+    @Column(name = "tp_situacao", nullable = false)
+    private Situacao situacao;
+        
     
     /**
      * @return the id
@@ -135,5 +149,39 @@ public class Tarefa {
         this.descricao = descricao;
     }
     
-    
+    /**
+     * @return the dataLimite
+     */
+    public Calendar getDataLimite() {
+        return dataLimite;
+    }
+
+    /**
+     * @param dataLimite the dataLimite to set
+     */
+    public void setDataLimite(Calendar dataLimite) {
+        this.dataLimite = dataLimite;
+        
+        Calendar hoje = Calendar.getInstance();
+        
+        if(dataLimite != null && dataLimite.before(hoje))
+            throw new IllegalStateException("Data limite é menor que hoje.");
+        this.dataLimite = dataLimite;
+        return;
+    }   
+
+    /**
+     * @return the situacao
+     */
+    public Situacao getSituacao() {
+        return situacao;
+    }
+
+    /**
+     * @param situacao the situacao to set
+     */
+    public void setSituacao(Situacao situacao) {
+        this.situacao = situacao;
+        
+    }
 }
